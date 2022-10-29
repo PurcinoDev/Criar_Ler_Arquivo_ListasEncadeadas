@@ -12,8 +12,6 @@ import br.com.leandrocolevati.Lista.Lista;
 import model.Cliente;
 
 public class ModificacaoCadastroController {
-	
-	private static int i=1;
 
 	public ModificacaoCadastroController() {
 		super();
@@ -46,7 +44,7 @@ public class ModificacaoCadastroController {
 		} else {
 			throw new IOException("Diretório inválido");
 		}
-		i++;
+		
 	}
 	
 	public void novoCadastro (String caminho, String arquivo, int idadeMin, int idadeMax, double limiteCredito )throws Exception {
@@ -81,7 +79,7 @@ public class ModificacaoCadastroController {
 		} else {
 			throw new IOException("Arquivo inválido");
 		}
-		String nomeArquivo = "ListaClienteCompra" + i + ".csv";
+		String nomeArquivo = "Idade" + idadeMin +"-" + idadeMax + "-Limite" + (int)limiteCredito + ".csv";
 		novoArquivo(l, caminho, nomeArquivo);
 	}
 
