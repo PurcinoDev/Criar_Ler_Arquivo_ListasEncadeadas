@@ -1,6 +1,6 @@
 package controller;
 
-
+import model.Cliente;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,33 +9,33 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import br.com.leandrocolevati.Lista.Lista;
-import model.Cliente;
 
 public class ModificacaoCadastroController {
-
+	
 	public ModificacaoCadastroController() {
 		super();
 	}
-
-	private void novoArquivo(Lista l, String caminho, String nomeArquivo) throws Exception{
+	
+	private void novoArquivo(Lista l, String caminho, String nomeArquivo) throws Exception {
 		
 		File dir = new File(caminho);
+		
 		if (dir.exists() && dir.isDirectory()) {
-			File arq = new File(caminho, nomeArquivo);
-			boolean existe = false;
-			if (arq.exists()) {
-				existe = true;
-			}
 			
+//			Cria um novo arquivo
+			File arq = new File(caminho, nomeArquivo);
+			
+//			Instancia um StringBuffer para preencher o arquivo com o conteúdo da lista
 			StringBuffer buffer = new StringBuffer();
-			int tamanho = l.size();
+			int contador = l.size();
 			String linha = "";
-			for (int i = 0; i < tamanho; i++) {
+			for (int i = 0; i < contador; i++) {
 				linha = l.get(i).toString();
 				buffer.append(linha + "\r\n");
 			}
 			
-			FileWriter abreArquivo = new FileWriter(arq, existe);
+//			Escreve o conteúdo pego no StringBuffer no arquivo novo criado
+			FileWriter abreArquivo = new FileWriter(arq);
 			PrintWriter escreveArq = new PrintWriter(abreArquivo);
 			escreveArq.write(buffer.toString());
 			escreveArq.flush();
@@ -47,9 +47,10 @@ public class ModificacaoCadastroController {
 		
 	}
 	
-	public void novoCadastro (String caminho, String arquivo, int idadeMin, int idadeMax, double limiteCredito )throws Exception {
-		Lista l = new Lista();
+	public void novoCadastro(String caminho, String arquivo, int idadeMin, int idadeMax, double limiteCredito) throws Exception {
+		Lista lClient = new Lista();
 		File arq = new File(caminho, arquivo);
+		
 		if (arq.exists() && arq.isFile()) {
 			FileInputStream fluxo = new FileInputStream(arq);
 			InputStreamReader leFluxo = new InputStreamReader(fluxo);
@@ -58,19 +59,20 @@ public class ModificacaoCadastroController {
 			while (linha != null) {
 				if (linha.contains(";")) {
 					String[] vetLinha = linha.split(";");
-					Cliente c = new Cliente();
-					c.cpf = vetLinha[0];
-					c.nome = vetLinha[1];
-					c.idade = Integer.parseInt(vetLinha[2]);
-					c.limiteCredito = Double.parseDouble(vetLinha[3]);
-					if (c.idade >= idadeMin && c.idade <= idadeMax && c.limiteCredito >= limiteCredito) {
-						if(l.isEmpty()) {
-							l.addFirst(c);
-						}else {
-							l.addLast(c);
+					Cliente cliente = new Cliente();
+					cliente.cpf = vetLinha[0];
+					cliente.nome = vetLinha[1];
+					cliente.idade = Integer.parseInt(vetLinha[2]);
+					cliente.limiteCredito = Double.parseDouble(vetLinha[3].replace(",", "."));
+					if (cliente.idade >= idadeMin && cliente.idade <= idadeMax && cliente.limiteCredito >= limiteCredito) {
+						if (lClient.isEmpty()) {
+							lClient.addFirst(cliente);
+						} else {
+							lClient.addLast(cliente);
 						}
 					}
 				}
+				
 				linha = buffer.readLine();
 			}
 			buffer.close();
@@ -79,8 +81,8 @@ public class ModificacaoCadastroController {
 		} else {
 			throw new IOException("Arquivo inválido");
 		}
-		String nomeArquivo = "Idade" + idadeMin +"-" + idadeMax + "-Limite" + (int)limiteCredito + ".csv";
-		novoArquivo(l, caminho, nomeArquivo);
+		String nomeArquivo = "Idade" + idadeMin + "_Limite" + (int)limiteCredito + ".csv";
+		novoArquivo(lClient, caminho, nomeArquivo);
 	}
 
 }
